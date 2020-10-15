@@ -21,4 +21,21 @@ public class Position {
 
     public int getNormY() { return y - 1; }
 
+    public Position clone()
+    {
+        return new Position(this.x, this.y);
+    }
+
+    public Position addX(int x)
+    {
+        this.x += x;
+        return this;
+    }
+
+    public Position addY(int y)
+    {
+        this.y += y;
+        return this;
+    }
+
 }
