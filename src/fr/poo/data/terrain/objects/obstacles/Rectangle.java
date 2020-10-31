@@ -3,6 +3,8 @@ package fr.poo.data.terrain.objects.obstacles;
 import fr.poo.data.Position;
 import fr.poo.data.terrain.objects.TerrainObjectData;
 
+import java.util.Random;
+
 public class Rectangle extends Obstacle {
     private int width;
     private int height;
@@ -23,6 +25,18 @@ public class Rectangle extends Obstacle {
                 positions[i++] = new Position(x, y);
 
         return new TerrainObjectData(this, positions);
+    }
+
+    @Override
+    public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
+        int tempWidth = width;
+        int tempHeight = height;
+        width = random.nextInt(width);
+        height = random.nextInt(height);
+        TerrainObjectData data = calculateTerrainObjectData();
+        width = tempWidth;
+        height = tempHeight;
+        return data;
     }
 
 }

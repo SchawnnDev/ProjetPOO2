@@ -5,14 +5,13 @@ import fr.poo.data.terrain.objects.TerrainObjectData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Random;
 
 public class Triangle extends Obstacle {
 
     private int height;
 
-    public Triangle(int height, Position at)
-    {
+    public Triangle(int height, Position at) {
         super(at);
         this.height = height;
     }
@@ -36,6 +35,15 @@ public class Triangle extends Obstacle {
         }
 
         return new TerrainObjectData(this, positions);
+    }
+
+    @Override
+    public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
+        int tempHeight = height;
+        height = random.nextInt(height);
+        TerrainObjectData data = calculateTerrainObjectData();
+        height = tempHeight;
+        return data;
     }
 
 }

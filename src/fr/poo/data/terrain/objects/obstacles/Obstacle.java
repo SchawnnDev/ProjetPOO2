@@ -3,6 +3,8 @@ package fr.poo.data.terrain.objects.obstacles;
 import fr.poo.data.Position;
 import fr.poo.data.terrain.objects.TerrainObject;
 
+import java.util.Random;
+
 public abstract class Obstacle extends TerrainObject {
     private Position at;
 
@@ -13,4 +15,9 @@ public abstract class Obstacle extends TerrainObject {
     public Position getAt() {
         return at;
     }
+
+    public void setAt(Position at) {
+        this.at = at;
+    }
+
 }

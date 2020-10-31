@@ -5,6 +5,7 @@ import fr.poo.data.terrain.objects.TerrainObjectData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Circle extends Obstacle {
     private int radius;
@@ -25,5 +26,14 @@ public class Circle extends Obstacle {
                     positions.add(new Position(getAt().getX() + x, getAt().getY() + y));
 
         return new TerrainObjectData(this, positions.toArray(new Position[positions.size()]));
+    }
+
+    @Override
+    public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
+        int tempRadius = radius;
+        radius = random.nextInt(radius);
+        TerrainObjectData data = calculateTerrainObjectData();
+        radius = tempRadius;
+        return data;
     }
 }

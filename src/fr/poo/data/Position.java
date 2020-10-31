@@ -1,8 +1,18 @@
 package fr.poo.data;
 
-public class Position {
+import fr.poo.io.ISerializable;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Position implements ISerializable<Position> {
     private int x;
     private int y;
+
+    public Position()
+    {
+        this(0,0);
+    }
 
     public Position(int x, int y) {
         this.x = x;
@@ -17,25 +27,43 @@ public class Position {
         return y;
     }
 
-    public int getNormX() { return x - 1; }
+    public int getNormX() {
+        return x - 1;
+    }
 
-    public int getNormY() { return y - 1; }
+    public int getNormY() {
+        return y - 1;
+    }
 
-    public Position clone()
-    {
+    public Position clone() {
         return new Position(this.x, this.y);
     }
 
-    public Position addX(int x)
-    {
+    public Position addX(int x) {
         this.x += x;
         return this;
     }
 
-    public Position addY(int y)
-    {
+    public Position addY(int y) {
         this.y += y;
         return this;
     }
 
+    @Override
+    public List<String> serialize() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.x);
+        builder.append(' ');
+        builder.append(this.y);
+        return Arrays.asList(builder.toString());
+    }
+
+    @Override
+    public Position deserialize(List<String> s) {
+        String[] split = s.get(0).split(" ");
+        if (split.length != 2) return this;
+        this.x = Integer.parseInt(split[0]);
+        this.y = Integer.parseInt(split[1]);
+        return this;
+    }
 }
