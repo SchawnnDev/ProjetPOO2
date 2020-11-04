@@ -2,10 +2,16 @@ package fr.poo;
 
 import fr.poo.data.Position;
 import fr.poo.data.terrain.Terrain;
+import fr.poo.data.terrain.objects.PathItem;
 import fr.poo.data.terrain.objects.Player;
 import fr.poo.exceptions.ObjectOutTerrainException;
-import fr.poo.exceptions.PositionWrongException;
+import fr.poo.exceptions.PathNotFoundException;
 import fr.poo.graphics.MainFrame;
+import fr.poo.graphs.PathFindingAlgorithm;
+import fr.poo.graphs.astar.AStarAlgorithm;
+import fr.poo.threads.ThreadManager;
+
+import java.util.List;
 
 public class Main {
 
@@ -27,7 +33,7 @@ public class Main {
         } */
 
         Player romeo = new Player("Roméo", new Position(5, terrain.getHeight() / 2));
-        Player juliette = new Player("Juliette", new Position(terrain.getWidth()-5, terrain.getHeight() / 2));
+        Player juliette = new Player("Juliette", new Position(terrain.getWidth() - 5, terrain.getHeight() / 2));
 
         try {
             terrain.addPlayer(romeo);
@@ -36,11 +42,29 @@ public class Main {
             e.printStackTrace();
         }
 
-        terrain.fillTerrainWithItems(50);
-        // display(terrain);
-
         MainFrame frame = new MainFrame(terrain);
         frame.open();
+
+        terrain.fillTerrainWithItems(300);
+        // display(terrain);
+
+        System.out.println("Bla");
+
+        ThreadManager.getService().submit(() -> {
+            PathFindingAlgorithm algorithm = new AStarAlgorithm(terrain);
+
+            try {
+                List<Position> path = algorithm.findPathTo(romeo.getAt(), juliette.getAt());
+
+                for (int i = 1; i < path.size() - 1; i++) {
+                    terrain.addTerrainObject(new PathItem(path.get(i)).calculateTerrainObjectData());
+                }
+
+            } catch (PathNotFoundException | ObjectOutTerrainException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     public static void display(Terrain terrain) {

@@ -9,9 +9,8 @@ public class Position implements ISerializable<Position> {
     private int x;
     private int y;
 
-    public Position()
-    {
-        this(0,0);
+    public Position() {
+        this(0, 0);
     }
 
     public Position(int x, int y) {
@@ -27,14 +26,6 @@ public class Position implements ISerializable<Position> {
         return y;
     }
 
-    public int getNormX() {
-        return x - 1;
-    }
-
-    public int getNormY() {
-        return y - 1;
-    }
-
     public Position clone() {
         return new Position(this.x, this.y);
     }
@@ -47,6 +38,10 @@ public class Position implements ISerializable<Position> {
     public Position addY(int y) {
         this.y += y;
         return this;
+    }
+
+    public double computeDistance(Position to) {
+        return Math.sqrt(Math.pow(to.getX() - getX(), 2) + Math.pow(to.getY() - getY(), 2));
     }
 
     @Override

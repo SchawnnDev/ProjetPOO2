@@ -2,6 +2,7 @@ package fr.poo.data.terrain.objects.obstacles;
 
 import fr.poo.data.Position;
 import fr.poo.data.terrain.objects.TerrainObjectData;
+import fr.poo.utils.Randoms;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Triangle extends Obstacle {
 
         for (int i = height - 1; i >= 0; i--) {
 
-            Position mid = new Position(getAt().getX(), getAt().getY() + i);
+            Position mid = new Position(getAt().getX(), getAt().getY() - i);
             positions.add(mid);
 
             for (int j = 1; j <= width; j++) {
@@ -40,7 +41,7 @@ public class Triangle extends Obstacle {
     @Override
     public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
         int tempHeight = height;
-        height = random.nextInt(height);
+        height = Randoms.randomRangeInt(1 / 3 * height, height);
         TerrainObjectData data = calculateTerrainObjectData();
         height = tempHeight;
         return data;

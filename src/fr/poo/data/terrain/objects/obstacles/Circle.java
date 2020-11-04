@@ -2,6 +2,7 @@ package fr.poo.data.terrain.objects.obstacles;
 
 import fr.poo.data.Position;
 import fr.poo.data.terrain.objects.TerrainObjectData;
+import fr.poo.utils.Randoms;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Circle extends Obstacle {
     @Override
     public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
         int tempRadius = radius;
-        radius = random.nextInt(radius);
+        radius =  Randoms.randomRangeInt((int)((double)1/3 * radius), radius);
         TerrainObjectData data = calculateTerrainObjectData();
         radius = tempRadius;
         return data;

@@ -1,7 +1,10 @@
 package fr.poo.graphics.components;
 
 import fr.poo.data.terrain.Terrain;
+import fr.poo.data.terrain.objects.AlternativePathItem;
+import fr.poo.data.terrain.objects.PathItem;
 import fr.poo.data.terrain.objects.Player;
+import fr.poo.data.terrain.objects.TerrainObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,10 +30,17 @@ public class TerrainComponent extends JComponent {
             for (int x = 0; x < terrain.getWidth(); x++) {
                 if (terrain.isEmpty(x, y)) continue;
 
-                if (terrain.getObject(x, y) instanceof Player)
+                TerrainObject object = terrain.getObject(x, y);
+
+                if (object instanceof Player) {
                     g.setColor(Color.GREEN);
-                else
+                } else if (object instanceof PathItem) {
+                    g.setColor(Color.RED);
+                } else if(object instanceof AlternativePathItem) {
+                    g.setColor(Color.orange);
+                } else {
                     g.setColor(Color.BLACK);
+                }
 
                 g.fillRect(x * pixelWidth, y * pixelHeight, pixelWidth, pixelHeight);
                 g.setColor(Color.WHITE);

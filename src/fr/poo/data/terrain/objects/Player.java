@@ -18,11 +18,16 @@ public class Player extends TerrainObject {
         return name;
     }
 
+    public Position getAt() {
+        return at;
+    }
+
     @Override
     public TerrainObjectData calculateTerrainObjectData() {
-        int width = 5;
-        Rectangle rectangle = new Rectangle(width, width, at.clone().addX(-(width / 2)).addY(-(width / 2)));
-        return new TerrainObjectData(this, rectangle.calculateTerrainObjectData().getPositions());
+        //int width = 5;
+        //Rectangle rectangle = new Rectangle(width, width, at.clone().addX(-(width / 2)).addY(-(width / 2)));
+      //  return new TerrainObjectData(this, rectangle.calculateTerrainObjectData().getPositions());
+        return new TerrainObjectData(this, new Position[]{at});
     }
 
     @Override

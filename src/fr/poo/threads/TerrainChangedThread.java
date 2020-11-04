@@ -22,12 +22,6 @@ public class TerrainChangedThread implements Runnable {
                 System.out.println("Repainting...");
             }
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
         }
 
     }

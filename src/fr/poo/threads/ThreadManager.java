@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 
 public class ThreadManager {
 
-    private static final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private static final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 5);
 
     public static ExecutorService getService() {
         return service;

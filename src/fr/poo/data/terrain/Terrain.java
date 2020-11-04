@@ -47,7 +47,7 @@ public class Terrain implements ISerializable<Terrain> {
     }
 
     public void setObject(Position position, TerrainObject object) {
-        this.objects[position.getNormX()][position.getNormY()] = object;
+        this.objects[position.getX()][position.getY()] = object;
     }
 
     public void addObstacle(Obstacle obstacle) throws ObstacleOutTerrainException {
@@ -61,11 +61,14 @@ public class Terrain implements ISerializable<Terrain> {
     }
 
     public void addTerrainObject(TerrainObjectData data) throws ObjectOutTerrainException {
-        if (!checkPositions(data.getPositions()))
-            throw new ObjectOutTerrainException();
+
+        for (Position position : data.getPositions()) {
+            if (checkPosition(position.getX(), position.getY())) continue;
+            throw new ObjectOutTerrainException(position);
+        }
 
         for (Position position : data.getPositions())
-            objects[position.getNormX()][position.getNormY()] = data.getTerrainObject();
+            objects[position.getX()][position.getY()] = data.getTerrainObject();
     }
 
     public void addPlayer(Player player) throws ObjectOutTerrainException {
@@ -73,7 +76,7 @@ public class Terrain implements ISerializable<Terrain> {
     }
 
     public boolean checkPosition(Position position) {
-        return position != null && checkPosition(position.getNormX(), position.getNormY());
+        return position != null && checkPosition(position.getX(), position.getY());
     }
 
     public boolean checkPosition(int x, int y) {
@@ -82,7 +85,7 @@ public class Terrain implements ISerializable<Terrain> {
 
     public boolean checkPositions(Position[] positions) {
         for (Position position : positions) {
-            if (checkPosition(position.getNormX(), position.getNormY())) continue;
+            if (checkPosition(position.getX(), position.getY())) continue;
             return false;
         }
         return true;
@@ -94,29 +97,55 @@ public class Terrain implements ISerializable<Terrain> {
 
         for (int i = 0; i < nb; i++) {
 
-            int trials = 0;
+            ThreadManager.getService().submit(() -> {
+                int trials = 0;
 
-            do {
-                int x = random.nextInt(this.width);
-                int y = random.nextInt(this.width);
-                Position position = new Position(x, y);
+                do {
+                    int x = random.nextInt(this.width);
+                    int y = random.nextInt(this.width);
+                    Position position = new Position(x, y);
 
-                try {
-                    Future<TerrainObjectData> data = ThreadManager.getService().submit(generateRandomObstacle(position));
-                    addTerrainObject(data.get());
-                    break;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (ObjectOutTerrainException e) {
-                    //e.printStackTrace();
-                }
+                    try {
+                        /*Future<TerrainObjectData> data = ThreadManager.getService().submit(generateRandomObstacle(position));
+                        addTerrainObject(data.get());*/
+                        addTerrainObject(generateRandomObstacle2(position));
+                        break;
+                    } catch (ObjectOutTerrainException e) {
+                        //e.printStackTrace();
+                    }
 
-            } while (true && trials++ < maxTrialCount);
+                } while (true && trials++ < maxTrialCount);
+            });
 
         }
 
+    }
+
+    public TerrainObjectData generateRandomObstacle2(Position at) {
+            Obstacle obstacle = null;
+            final int height = getHeight();
+
+            switch (random.nextInt(3)) {
+                case 0:
+                    obstacle = new Circle(height, at);
+                    break;
+                case 1:
+                    obstacle = new Rectangle(20, height, at);
+                    break;
+                case 2:
+                    obstacle = new Triangle(height, at);
+                    break;
+                default:
+                    break;
+            }
+            TerrainObjectData data;
+            int trials = 0;
+
+            do {
+                data = obstacle.calculateRandomTerrainObjectData(random);
+            } while (!checkPositions(data.getPositions()) && trials++ < maxTrialCount);
+
+            return data;
     }
 
     public Callable<TerrainObjectData> generateRandomObstacle(Position at) {
