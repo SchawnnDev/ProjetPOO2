@@ -1,5 +1,6 @@
 package fr.poo.graphics.components;
 
+import fr.poo.Main;
 import fr.poo.data.terrain.Terrain;
 import fr.poo.data.terrain.objects.AlternativePathItem;
 import fr.poo.data.terrain.objects.PathItem;
@@ -9,8 +10,7 @@ import fr.poo.data.terrain.objects.TerrainObject;
 import javax.swing.*;
 import java.awt.*;
 
-import static fr.poo.graphics.MainFrame.pixelHeight;
-import static fr.poo.graphics.MainFrame.pixelWidth;
+import static fr.poo.Main.getPixelSize;
 
 public class TerrainComponent extends JComponent {
 
@@ -19,7 +19,7 @@ public class TerrainComponent extends JComponent {
     public TerrainComponent(Terrain terrain) {
         this.terrain = terrain;
         this.setBackground(Color.DARK_GRAY);
-        this.setPreferredSize(new Dimension(terrain.getWidth() * pixelWidth, terrain.getHeight() * pixelHeight));
+        this.setPreferredSize(new Dimension(terrain.getWidth() * getPixelSize(), terrain.getHeight() * getPixelSize()));
     }
 
     @Override
@@ -42,9 +42,9 @@ public class TerrainComponent extends JComponent {
                     g.setColor(Color.BLACK);
                 }
 
-                g.fillRect(x * pixelWidth, y * pixelHeight, pixelWidth, pixelHeight);
+                g.fillRect(x * getPixelSize(), y * getPixelSize(), getPixelSize(), getPixelSize());
                 g.setColor(Color.WHITE);
-                g.drawRect(x * pixelWidth, y * pixelHeight, pixelWidth, pixelHeight);
+                g.drawRect(x * getPixelSize(), y * getPixelSize(), getPixelSize(), getPixelSize());
             }
         }
 
@@ -59,13 +59,13 @@ public class TerrainComponent extends JComponent {
 
     private void drawGrid(Graphics g, Color color) {
         g.setColor(color);
-        final int x2 = terrain.getWidth() * pixelWidth;
-        final int y2 = terrain.getHeight() * pixelHeight;
+        final int x2 = terrain.getWidth() * getPixelSize();
+        final int y2 = terrain.getHeight() * getPixelSize();
 
         for (int y = 0; y <= terrain.getHeight(); y++) {
             for (int x = 0; x <= terrain.getWidth(); x++) {
-                g.drawLine(x * pixelWidth, 0, x * pixelWidth, y2);
-                g.drawLine(0, y * pixelHeight, x2, y * pixelHeight);
+                g.drawLine(x * getPixelSize(), 0, x * getPixelSize(), y2);
+                g.drawLine(0, y * getPixelSize(), x2, y * getPixelSize());
             }
         }
     }

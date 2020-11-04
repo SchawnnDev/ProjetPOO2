@@ -12,8 +12,6 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    public static int pixelWidth = 5;
-    public static int pixelHeight = 5;
     private final Terrain terrain;
     private JPanel contentPane;
     private TerrainComponent terrainComponent;
