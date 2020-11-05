@@ -12,6 +12,9 @@ public class Triangle extends Obstacle {
 
     private int height;
 
+    public Triangle() {
+    }
+
     public Triangle(int height, Position at) {
         super(at);
         this.height = height;
@@ -40,11 +43,28 @@ public class Triangle extends Obstacle {
 
     @Override
     public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
-        int tempHeight = height;
         height = Randoms.randomRangeInt(1 / 3 * height, height);
-        TerrainObjectData data = calculateTerrainObjectData();
-        height = tempHeight;
-        return data;
+        return calculateTerrainObjectData();
+    }
+
+    @Override
+    public List<String> serialize() {
+        List<String> lines = super.serialize();
+        lines.add(String.valueOf(height));
+        return lines;
+    }
+
+    @Override
+    public Obstacle deserialize(List<String> lines) {
+        Obstacle obstacle = super.deserialize(lines);
+        ((Triangle)obstacle).height = Integer.parseInt(lines.get(1));
+        System.out.println("Triangle à " + getAt() + "> height: " + height);
+        return obstacle;
+    }
+
+    @Override
+    public Obstacle clone() {
+        return new Triangle(this.height, getAt());
     }
 
 }

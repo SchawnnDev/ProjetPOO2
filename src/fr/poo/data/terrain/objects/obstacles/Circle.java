@@ -11,6 +11,9 @@ import java.util.Random;
 public class Circle extends Obstacle {
     private int radius;
 
+    public Circle() {
+    }
+
     public Circle(int radius, Position at) {
         super(at);
         this.radius = radius;
@@ -31,10 +34,28 @@ public class Circle extends Obstacle {
 
     @Override
     public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
-        int tempRadius = radius;
-        radius =  Randoms.randomRangeInt((int)((double)1/3 * radius), radius);
-        TerrainObjectData data = calculateTerrainObjectData();
-        radius = tempRadius;
-        return data;
+        radius = Randoms.randomRangeInt((int) ((double) 1 / 3 * radius), radius);
+        return calculateTerrainObjectData();
     }
+
+    @Override
+    public List<String> serialize() {
+        List<String> lines = super.serialize();
+        lines.add(String.valueOf(radius));
+        return lines;
+    }
+
+    @Override
+    public Obstacle deserialize(List<String> lines) {
+        Obstacle obstacle = super.deserialize(lines);
+        ((Circle)obstacle).radius = Integer.parseInt(lines.get(1));
+        System.out.println("Circle à " + getAt() + "> radius: " + radius);
+        return obstacle;
+    }
+
+    @Override
+    public Obstacle clone() {
+        return new Circle(this.radius, getAt());
+    }
+
 }

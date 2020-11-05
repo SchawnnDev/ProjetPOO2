@@ -1,5 +1,7 @@
 package fr.poo.io;
 
+import fr.poo.data.terrain.objects.obstacles.Obstacle;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

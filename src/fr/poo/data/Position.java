@@ -45,6 +45,11 @@ public class Position implements ISerializable<Position> {
     }
 
     @Override
+    public String toString() {
+        return String.format("[%d, %d]", this.x, this.y);
+    }
+
+    @Override
     public List<String> serialize() {
         StringBuilder builder = new StringBuilder();
         builder.append(this.x);
@@ -59,6 +64,7 @@ public class Position implements ISerializable<Position> {
         if (split.length != 2) return this;
         this.x = Integer.parseInt(split[0]);
         this.y = Integer.parseInt(split[1]);
+        System.out.println(String.format("position(%d,%d)", x, y));
         return this;
     }
 }

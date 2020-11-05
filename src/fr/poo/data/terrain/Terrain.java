@@ -17,11 +17,14 @@ import fr.poo.graphs.PathFindingAlgorithm;
 import fr.poo.io.ISerializable;
 import fr.poo.threads.ThreadManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class Terrain implements ISerializable<Terrain> {
     private final Random random = new Random();
@@ -34,6 +37,9 @@ public class Terrain implements ISerializable<Terrain> {
         this.width = width;
         this.height = height;
         createTerrain();
+    }
+
+    public Terrain() {
     }
 
     public void createTerrain() {
@@ -49,7 +55,11 @@ public class Terrain implements ISerializable<Terrain> {
     }
 
     public void setObject(Position position, TerrainObject object) {
-        this.objects[position.getX()][position.getY()] = object;
+        setObject(position.getX(), position.getY(), object);
+    }
+
+    public void setObject(int x, int y, TerrainObject object) {
+        this.objects[x][y] = object;
     }
 
     public void addObstacle(Obstacle obstacle) throws ObstacleOutTerrainException {
@@ -128,16 +138,7 @@ public class Terrain implements ISerializable<Terrain> {
                 int x = random.nextInt(getWidth());
                 int y = random.nextInt(getHeight());
                 Position position = new Position(x, y);
-        /*
-        try {
-                    /*Future<TerrainObjectData> data = ThreadManager.getService().submit(generateRandomObstacle(position));
-                    addTerrainObject(data.get());
-            addTerrainObject();
-            break;
-        } catch (ObjectOutTerrainException e) {
-            //e.printStackTrace();
-        }*/
-                TerrainObjectData data = generateRandomObstacle2(position);
+                TerrainObjectData data = generateRandomObstacle(position);
 
                 if (data != null && checkPositions(data.getPositions()))
                     return data;
@@ -157,7 +158,7 @@ public class Terrain implements ISerializable<Terrain> {
         return ThreadManager.getService().invokeAll(callables);
     }
 
-    public TerrainObjectData generateRandomObstacle2(Position at) {
+    public TerrainObjectData generateRandomObstacle(Position at) {
         Obstacle obstacle = null;
         final int height = getHeight();
 
@@ -178,39 +179,10 @@ public class Terrain implements ISerializable<Terrain> {
         int trials = 0;
 
         do {
-            data = obstacle.calculateRandomTerrainObjectData(random);
+            data = obstacle.clone().calculateRandomTerrainObjectData(random);
         } while (!checkPositions(data.getPositions()) && trials++ < maxTrialCount);
 
         return data;
-    }
-
-    public Callable<TerrainObjectData> generateRandomObstacle(Position at) {
-        return () -> {
-            Obstacle obstacle = null;
-            final int height = getHeight();
-
-            switch (random.nextInt(3)) {
-                case 0:
-                    obstacle = new Circle(height, at);
-                    break;
-                case 1:
-                    obstacle = new Rectangle(20, height, at);
-                    break;
-                case 2:
-                    obstacle = new Triangle(height, at);
-                    break;
-                default:
-                    break;
-            }
-            TerrainObjectData data;
-            int trials = 0;
-
-            do {
-                data = obstacle.calculateRandomTerrainObjectData(random);
-            } while (!checkPositions(data.getPositions()) && trials++ < maxTrialCount);
-
-            return data;
-        };
     }
 
     public int getEmptyTilesCount() {
@@ -239,6 +211,19 @@ public class Terrain implements ISerializable<Terrain> {
         return objects;
     }
 
+    public List<Obstacle> getObstacles() {
+        List<Obstacle> obstacles = new ArrayList<>();
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                TerrainObject object = objects[x][y];
+                if (object == null || !(objects[x][y] instanceof Obstacle) || obstacles.contains(object))
+                    continue;
+                obstacles.add((Obstacle) object);
+            }
+        }
+        return obstacles;
+    }
+
     public int getWidth() {
         return width;
     }
@@ -250,30 +235,61 @@ public class Terrain implements ISerializable<Terrain> {
     @Override
     public List<String> serialize() {
         List<String> list = new ArrayList<>();
-        list.add(getWidth() + " " + getHeight());
+        list.add(String.valueOf(getWidth()));
+        list.add(String.valueOf(getHeight()));
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (objects[i][j] == null) continue;
-                list.add(i + ";" + j + ";" + String.join("|", objects[i][j].calculateTerrainObjectData().serialize()));
-            }
-        }
+        for (Obstacle obstacle : getObstacles())
+            list.add(String.join(",", obstacle.serialize()));
+
         return list;
     }
 
     @Override
     public Terrain deserialize(List<String> lines) {
-        String[] fLine = lines.get(0).split(" ");
-        this.width = Integer.parseInt(fLine[0]);
-        this.height = Integer.parseInt(fLine[1]);
+        this.width = Integer.parseInt(lines.get(0));
+        this.height = Integer.parseInt(lines.get(1));
         createTerrain();
 
-        for (int i = 1; i < lines.size(); i++) {
-            String[] split = lines.get(i).split("|");
-            objects[Integer.parseInt(split[0])][Integer.parseInt(split[1])] = null;
-            //new TerrainObjectData().deserialize(Arrays.asList(split[2].split(" ")));
+        for (int i = 2; i < lines.size(); i++) {
+            List<String> split = Arrays.asList(lines.get(i).split(","));
+
+            // System.out.println("Trying to get class " + split.get(0) + " in " + lines.get(i));
+
+            try {
+                Class<?> cl = Class.forName(split.get(0));
+
+                Obstacle obstacle = (Obstacle) cl.getConstructor().newInstance();
+                obstacle.deserialize(split.stream().skip(1).collect(Collectors.toList()));
+                System.out.println("Loaded obstacle " + obstacle.getAt().getX() + " >> " + obstacle.getAt().getY());
+
+                addObstacle(obstacle);
+
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (ObstacleOutTerrainException e) {
+                e.printStackTrace();
+                break;
+            }
+
         }
 
+        System.out.println("Terminé");
+
         return this;
+    }
+
+    public static void copy(Terrain t1, Terrain t2) {
+        for (int x = 0; x < t1.getWidth(); x++) {
+            for (int y = 0; y < t1.getHeight(); y++) {
+                TerrainObject object = t1.getObject(x, y);
+                if (object == null || !(object instanceof Obstacle))
+                    continue;
+                t2.setObject(x, y, object);
+            }
+        }
     }
 }

@@ -2,15 +2,11 @@ package fr.poo.graphs.astar;
 
 import fr.poo.data.Position;
 import fr.poo.data.terrain.Terrain;
-import fr.poo.data.terrain.objects.AlternativePathItem;
-import fr.poo.exceptions.ObjectOutTerrainException;
 import fr.poo.exceptions.PathNotFoundException;
 import fr.poo.graphs.Algorithm;
 import fr.poo.graphs.NodeItem;
-import fr.poo.threads.ThreadManager;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AStarAlgorithm extends Algorithm {
 
@@ -35,7 +31,7 @@ public class AStarAlgorithm extends Algorithm {
         while (!openSet.isEmpty()) {
             //System.out.println("Open Set contains: " + openSet.stream().map(Node::getCurrent).collect(Collectors.toSet()));
             Node next = openSet.poll();
-           // System.out.println("Looking at node: " + next);
+            // System.out.println("Looking at node: " + next);
             if (next.getCurrent().equals(endNodeItem)) {
                 System.out.println("Found our destination!");
 
@@ -46,12 +42,12 @@ public class AStarAlgorithm extends Algorithm {
                     current = allNodes.get(current.getPrevious());
                 } while (current != null);
 
-               // System.out.println("Route: " + route);
+                // System.out.println("Route: " + route);
                 return Utils.toPositionsList(route);
             }
 
             for (NodeItem neighbour : next.getCurrent().getNeighbors()) {
-                double newScore = next.getRouteScore() +next.getCurrent().computeDistance(neighbour);
+                double newScore = next.getRouteScore() + next.getCurrent().computeDistance(neighbour);
                 Node nextNode = allNodes.getOrDefault(neighbour, new Node(neighbour));
                 allNodes.put(neighbour, nextNode);
 

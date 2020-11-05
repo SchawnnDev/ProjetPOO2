@@ -83,8 +83,8 @@ public class SettingsFrame extends JFrame {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         setDefaultCloseOperation( firstStart ? EXIT_ON_CLOSE : DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
         setSize(300, 200);
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 

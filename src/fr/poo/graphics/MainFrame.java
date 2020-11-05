@@ -1,6 +1,7 @@
 package fr.poo.graphics;
 
 import fr.poo.data.terrain.Terrain;
+import fr.poo.graphics.components.MenuBar;
 import fr.poo.graphics.components.TerrainComponent;
 import fr.poo.graphics.components.ToolBoxPanel;
 import fr.poo.threads.TerrainChangedThread;
@@ -9,6 +10,7 @@ import fr.poo.threads.ThreadManager;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame {
 
@@ -24,6 +26,7 @@ public class MainFrame extends JFrame {
         this.terrain = terrain;
         this.terrainComponent = new TerrainComponent(terrain);
         this.toolBoxComponent = new ToolBoxPanel(this);
+        this.setJMenuBar(new MenuBar(this));
         this.contentPane = new JPanel();
 
         // init frame
@@ -47,6 +50,10 @@ public class MainFrame extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
 
+    }
+
+    public void close() {
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     public void open() {

@@ -1,7 +1,9 @@
 package fr.poo.data.terrain.objects;
 
 import fr.poo.data.Position;
+import fr.poo.data.terrain.objects.obstacles.Obstacle;
 
+import java.util.List;
 import java.util.Random;
 
 public class AlternativePathItem extends TerrainObject {
@@ -18,6 +20,16 @@ public class AlternativePathItem extends TerrainObject {
 
     @Override
     public TerrainObjectData calculateRandomTerrainObjectData(Random random) {
+        return null;
+    }
+
+    @Override
+    public List<String> serialize() {
+        return null;
+    }
+
+    @Override
+    public Obstacle deserialize(List<String> lines) {
         return null;
     }
 }

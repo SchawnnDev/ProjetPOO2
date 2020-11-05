@@ -8,6 +8,7 @@ import fr.poo.data.terrain.objects.Player;
 import fr.poo.data.terrain.objects.TerrainObject;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 import static fr.poo.Main.getPixelSize;
@@ -19,6 +20,7 @@ public class TerrainComponent extends JComponent {
     public TerrainComponent(Terrain terrain) {
         this.terrain = terrain;
         this.setBackground(Color.DARK_GRAY);
+        this.setBorder(new EmptyBorder(10,10,10,10));
         this.setPreferredSize(new Dimension(terrain.getWidth() * getPixelSize(), terrain.getHeight() * getPixelSize()));
     }
 

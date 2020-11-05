@@ -11,6 +11,8 @@ import fr.poo.graphs.astar.AStarAlgorithm;
 import fr.poo.threads.ThreadManager;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -21,26 +23,33 @@ public class ToolBoxPanel extends JPanel {
     private JButton generateBtn;
     private JButton clearBtn;
 
+    private boolean loading = false;
+
     public ToolBoxPanel(MainFrame instance) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setBorder(new EmptyBorder(10, 10, 10, 10));
         this.instance = instance;
 
         // instances
         startBtn = new JButton("Lancer");
-        startBtn.addActionListener(e -> {
-
-            ThreadManager.getService().submit(() -> {
-                try {
-                    getTerrain().executeAlgorithm(new AStarAlgorithm(getTerrain()));
-                } catch (NotEnoughPlayersException | ObjectOutTerrainException | PathNotFoundException ex) {
-                    ex.printStackTrace();
-                }
-            });
-        });
+        startBtn.addActionListener(e -> ThreadManager.getService().submit(() -> {
+            switchLoading();
+            try {
+                getTerrain().executeAlgorithm(new AStarAlgorithm(getTerrain()));
+            } catch (NotEnoughPlayersException | ObjectOutTerrainException | PathNotFoundException ex) {
+                new UiException(ex, this);
+                ex.printStackTrace();
+            } finally {
+                switchLoading();
+            }
+        }));
 
         // ...
         generateBtn = new JButton("Générer");
         generateBtn.addActionListener(e -> ThreadManager.getService().submit(() -> {
+
+            switchLoading();
+
             try {
                 List<Future<TerrainObjectData>> futures = getTerrain().generateRandomItems(300);
                 for (Future<TerrainObjectData> future : futures) {
@@ -56,6 +65,9 @@ public class ToolBoxPanel extends JPanel {
                 }
             } catch (InterruptedException | ExecutionException ex) {
                 new UiException(ex, instance);
+                ex.printStackTrace();
+            } finally {
+                switchLoading();
             }
         }));
 
@@ -64,8 +76,6 @@ public class ToolBoxPanel extends JPanel {
             getTerrain().clear();
             JOptionPane.showMessageDialog(instance, "La grille a bien été clear.");
         }));
-
-
 
         this.add(generateBtn);
         this.add(startBtn);
@@ -76,4 +86,23 @@ public class ToolBoxPanel extends JPanel {
         return instance.getTerrainComponent().getTerrain();
     }
 
+    public void switchLoading() {
+        this.loading = !this.loading;
+        instance.setCursor(this.loading ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
+
+        for (JButton btn : getButtons())
+            btn.setEnabled(!this.loading);
+    }
+
+    private JButton[] getButtons() {
+        return new JButton[]{
+                generateBtn,
+                startBtn,
+                clearBtn
+        };
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
 }
