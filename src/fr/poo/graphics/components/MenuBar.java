@@ -3,6 +3,7 @@ package fr.poo.graphics.components;
 import fr.poo.data.terrain.Terrain;
 import fr.poo.exceptions.UiException;
 import fr.poo.graphics.MainFrame;
+import fr.poo.graphics.frames.WindowSettingsFrame;
 import fr.poo.io.FileManager;
 import fr.poo.threads.ThreadManager;
 
@@ -15,7 +16,7 @@ public class MenuBar extends JMenuBar {
 
     public MenuBar(MainFrame instance) {
 
-        JMenu fileMenu = new JMenu("File");
+        JMenu fileMenu = new JMenu("Fichier");
         fileMenu.setMnemonic('F');
 
         JMenuItem loadObstaclesMenuItem = new JMenuItem("Charger les obstacles");
@@ -61,16 +62,27 @@ public class MenuBar extends JMenuBar {
         JMenuItem exitMenuItem = new JMenuItem("Quitter");
 
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
-        exitMenuItem.addActionListener(e -> {
-            instance.close();
-        });
+        exitMenuItem.addActionListener(e -> instance.close());
 
         fileMenu.add(loadObstaclesMenuItem);
         fileMenu.add(saveObstaclesMenuItem);
         fileMenu.add(new JSeparator());
         fileMenu.add(exitMenuItem);
 
+        JMenu settingsMenu = new JMenu("Paramètres");
+        settingsMenu.setMnemonic('P');
+
+        JMenuItem windowSettingsItemMenu = new JMenuItem("Fenêtre");
+        windowSettingsItemMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK));
+        windowSettingsItemMenu.addActionListener(e -> new WindowSettingsFrame(instance));
+
+        JMenuItem obstaclesSettingsItemMenu = new JMenuItem("Obstacles");
+
+        settingsMenu.add(windowSettingsItemMenu);
+        settingsMenu.add(obstaclesSettingsItemMenu);
+
         this.add(fileMenu);
+        this.add(settingsMenu);
     }
 
 }

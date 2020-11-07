@@ -21,7 +21,12 @@ public class TerrainChangedThread implements Runnable {
             if (currentSize != getCurrentSize()) {
                 this.currentSize = getCurrentSize();
                 this.component.repaint();
-                System.out.println("Repainting...");
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
         }

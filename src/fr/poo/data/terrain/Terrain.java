@@ -143,7 +143,7 @@ public class Terrain implements ISerializable<Terrain> {
                 if (data != null && checkPositions(data.getPositions()))
                     return data;
 
-            } while (true && trials++ < maxTrialCount);
+            } while (trials++ < maxTrialCount);
 
             return null;
         };

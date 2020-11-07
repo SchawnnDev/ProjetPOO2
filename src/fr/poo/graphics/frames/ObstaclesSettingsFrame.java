@@ -1,0 +1,114 @@
+package fr.poo.graphics.frames;
+
+import fr.poo.Main;
+import fr.poo.data.Position;
+import fr.poo.data.terrain.Terrain;
+import fr.poo.data.terrain.objects.Player;
+import fr.poo.data.terrain.objects.obstacles.Obstacle;
+import fr.poo.exceptions.ObjectOutTerrainException;
+import fr.poo.exceptions.UiException;
+import fr.poo.graphics.MainFrame;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ObstaclesSettingsFrame extends JFrame {
+    private JSpinner pixelSizeSpinner;
+    private JSpinner terrainWidthSpinner;
+    private JSpinner terrainHeightSpinner;
+    //private JSpinner terrainHeightSpinner;
+    private Map<Obstacle, JSpinner[]> spinners;
+
+    private JButton saveButton;
+    private JButton cancelButton;
+
+    private MainFrame instance;
+
+    public ObstaclesSettingsFrame(MainFrame instance) {
+        this.instance = instance;
+        this.spinners = new HashMap<>();
+
+        JPanel spinnerPanel = new JPanel();
+        JPanel buttonsPanel = new JPanel();
+
+        spinnerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        spinnerPanel.setLayout(new GridLayout(3, 3));
+
+        JLabel pixelSizeLabel = new JLabel("Pixel size");
+        JLabel terrainWidthLabel = new JLabel("Terrain width (pixels)");
+        JLabel terrainHeightLabel = new JLabel("Terrain height (pixels)");
+
+        // setting up spinners
+        pixelSizeSpinner = new JSpinner(new SpinnerNumberModel(Main.getPixelSize(), 1, 50, 1));
+        terrainWidthSpinner = new JSpinner(new SpinnerNumberModel(Main.getTerrainWidth(), 10, 2000, 1));
+        terrainHeightSpinner = new JSpinner(new SpinnerNumberModel(Main.getTerrainHeight(), 10, 1000, 1));
+
+        // setting up buttons
+        saveButton = new JButton("Sauvegarder");
+        saveButton.addActionListener(e -> {
+
+            try {
+                Main.setPixelSize((Integer) pixelSizeSpinner.getValue());
+                Main.setTerrainWidth((Integer) terrainWidthSpinner.getValue());
+                Main.setTerrainHeight((Integer) terrainHeightSpinner.getValue());
+                setVisible(false);
+
+                    if (instance != null)
+                        instance.getTerrainComponent().repaint();
+                    JOptionPane.showMessageDialog(this, "Les modifications ont bien été enregistrées.");
+
+            } catch (Exception ex) {
+                new UiException(ex, this);
+            }
+
+        });
+
+        cancelButton = new JButton("Annuler");
+        cancelButton.addActionListener(e -> setVisible(false));
+
+        buttonsPanel.add(saveButton);
+        buttonsPanel.add(cancelButton);
+
+        // Spinner panel
+        spinnerPanel.add(pixelSizeLabel);
+        spinnerPanel.add(pixelSizeSpinner);
+
+        spinnerPanel.add(terrainWidthLabel);
+        spinnerPanel.add(terrainWidthSpinner);
+
+        spinnerPanel.add(terrainHeightLabel);
+        spinnerPanel.add(terrainHeightSpinner);
+
+        setTitle("Settings");
+        setLayout(new BorderLayout());
+
+        add(spinnerPanel, BorderLayout.CENTER);
+        add(buttonsPanel, BorderLayout.SOUTH);
+
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setSize(300, 200);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    private void open() {
+        Terrain terrain = new Terrain(300, 150);
+
+        Player romeo = new Player("Roméo", new Position(5, terrain.getHeight() / 2));
+        Player juliette = new Player("Juliette", new Position(terrain.getWidth() - 5, terrain.getHeight() / 2));
+
+        try {
+            terrain.addPlayer(romeo);
+            terrain.addPlayer(juliette);
+        } catch (ObjectOutTerrainException e) {
+            e.printStackTrace();
+        }
+
+        MainFrame frame = new MainFrame(terrain);
+        frame.open();
+    }
+
+}

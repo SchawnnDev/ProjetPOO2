@@ -1,11 +1,7 @@
 package fr.poo;
 
-import fr.poo.data.Position;
 import fr.poo.data.terrain.Terrain;
-import fr.poo.data.terrain.objects.Player;
-import fr.poo.exceptions.ObjectOutTerrainException;
-import fr.poo.graphics.MainFrame;
-import fr.poo.graphics.frames.SettingsFrame;
+import fr.poo.graphics.frames.WindowSettingsFrame;
 
 import javax.swing.*;
 
@@ -30,7 +26,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        new SettingsFrame(true);
+        new WindowSettingsFrame(true);
 
     }
 

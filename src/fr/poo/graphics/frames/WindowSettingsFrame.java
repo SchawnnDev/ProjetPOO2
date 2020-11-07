@@ -12,7 +12,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class SettingsFrame extends JFrame {
+public class WindowSettingsFrame extends JFrame {
     private JSpinner pixelSizeSpinner;
     private JSpinner terrainWidthSpinner;
     private JSpinner terrainHeightSpinner;
@@ -20,7 +20,14 @@ public class SettingsFrame extends JFrame {
     private JButton saveButton;
     private JButton cancelButton;
 
-    public SettingsFrame(boolean firstStart) {
+    private MainFrame instance;
+
+    public WindowSettingsFrame(MainFrame instance) {
+        this(false);
+        this.instance = instance;
+    }
+
+    public WindowSettingsFrame(boolean firstStart) {
         JPanel spinnerPanel = new JPanel();
         JPanel buttonsPanel = new JPanel();
 
@@ -46,15 +53,15 @@ public class SettingsFrame extends JFrame {
                 Main.setTerrainHeight((Integer) terrainHeightSpinner.getValue());
                 setVisible(false);
 
-                if(firstStart)
-                {
+                if (firstStart) {
                     SwingUtilities.invokeLater(() -> open());
                 } else {
-                    JOptionPane.showMessageDialog(this, String.format("Les modifs ont bien été enregistrées (%d) (%d) (%d)", Main.getPixelSize(), Main.getTerrainWidth(), Main.getTerrainHeight()));
+                    if (instance != null)
+                        instance.getTerrainComponent().repaint();
+                    JOptionPane.showMessageDialog(this, "Les modifications ont bien été enregistrées.");
                 }
 
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 new UiException(ex, this);
             }
 
@@ -82,14 +89,13 @@ public class SettingsFrame extends JFrame {
         add(spinnerPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
-        setDefaultCloseOperation( firstStart ? EXIT_ON_CLOSE : DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(firstStart ? EXIT_ON_CLOSE : DISPOSE_ON_CLOSE);
         setSize(300, 200);
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private void open()
-    {
+    private void open() {
         Terrain terrain = new Terrain(300, 150);
 
         Player romeo = new Player("Roméo", new Position(5, terrain.getHeight() / 2));

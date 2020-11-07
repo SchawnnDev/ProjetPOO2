@@ -67,6 +67,7 @@ public class AStarAlgorithm extends Algorithm {
                 }
             }
 
+            System.out.println("bla");
         }
 
         throw new PathNotFoundException();
