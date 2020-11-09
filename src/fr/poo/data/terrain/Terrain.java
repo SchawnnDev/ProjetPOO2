@@ -140,8 +140,10 @@ public class Terrain implements ISerializable<Terrain> {
                 Position position = new Position(x, y);
                 TerrainObjectData data = generateRandomObstacle(position);
 
-                if (data != null && checkPositions(data.getPositions()))
+                if (data != null && checkPositions(data.getPositions())) {
+                    addTerrainObject(data);
                     return data;
+                }
 
             } while (trials++ < maxTrialCount);
 

@@ -4,7 +4,6 @@ import fr.poo.Main;
 import fr.poo.data.Position;
 import fr.poo.data.terrain.Terrain;
 import fr.poo.data.terrain.objects.Player;
-import fr.poo.data.terrain.objects.obstacles.Obstacle;
 import fr.poo.exceptions.ObjectOutTerrainException;
 import fr.poo.exceptions.UiException;
 import fr.poo.graphics.MainFrame;
@@ -12,15 +11,12 @@ import fr.poo.graphics.MainFrame;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ObstaclesSettingsFrame extends JFrame {
     private JSpinner pixelSizeSpinner;
     private JSpinner terrainWidthSpinner;
     private JSpinner terrainHeightSpinner;
     //private JSpinner terrainHeightSpinner;
-    private Map<Obstacle, JSpinner[]> spinners;
 
     private JButton saveButton;
     private JButton cancelButton;
@@ -29,7 +25,6 @@ public class ObstaclesSettingsFrame extends JFrame {
 
     public ObstaclesSettingsFrame(MainFrame instance) {
         this.instance = instance;
-        this.spinners = new HashMap<>();
 
         JPanel spinnerPanel = new JPanel();
         JPanel buttonsPanel = new JPanel();

@@ -54,13 +54,13 @@ public class ToolBoxPanel extends JPanel {
                 List<Future<TerrainObjectData>> futures = getTerrain().generateRandomItems(300);
                 for (Future<TerrainObjectData> future : futures) {
                     TerrainObjectData data = future.get();
-                    if (data == null)
+                    /*if (data == null)
                         continue;
 
                     try {
                         getTerrain().addTerrainObject(data);
                     } catch (ObjectOutTerrainException ex) {
-                    }
+                    }*/
 
                 }
             } catch (InterruptedException | ExecutionException ex) {

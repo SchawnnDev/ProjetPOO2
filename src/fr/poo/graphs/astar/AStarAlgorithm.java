@@ -29,11 +29,10 @@ public class AStarAlgorithm extends Algorithm {
         openSet.add(startNode);
 
         while (!openSet.isEmpty()) {
-            //System.out.println("Open Set contains: " + openSet.stream().map(Node::getCurrent).collect(Collectors.toSet()));
             Node next = openSet.poll();
-            // System.out.println("Looking at node: " + next);
+
             if (next.getCurrent().equals(endNodeItem)) {
-                System.out.println("Found our destination!");
+                System.out.println("Yeah");
 
                 List<NodeItem> route = new ArrayList<>();
                 Node current = next;
@@ -63,11 +62,9 @@ public class AStarAlgorithm extends Algorithm {
                     nextNode.setRouteScore(newScore);
                     nextNode.setEstimatedScore(newScore + neighbour.computeDistance(endNodeItem));
                     openSet.add(nextNode);
-                    //System.out.println("Found a better route to node: " + nextNode);
                 }
             }
 
-            System.out.println("bla");
         }
 
         throw new PathNotFoundException();
