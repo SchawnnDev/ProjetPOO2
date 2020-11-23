@@ -16,6 +16,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ToolBoxPanel extends JPanel {
     private MainFrame instance;
@@ -53,7 +55,8 @@ public class ToolBoxPanel extends JPanel {
             try {
                 List<Future<TerrainObjectData>> futures = getTerrain().generateRandomItems(300);
                 for (Future<TerrainObjectData> future : futures) {
-                    TerrainObjectData data = future.get();
+                    TerrainObjectData data = future.get(2, TimeUnit.SECONDS);
+                    System.out.println("Is done ? : " + future.isDone());
                     /*if (data == null)
                         continue;
 
@@ -63,7 +66,7 @@ public class ToolBoxPanel extends JPanel {
                     }*/
 
                 }
-            } catch (InterruptedException | ExecutionException ex) {
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 new UiException(ex, instance);
                 ex.printStackTrace();
             } finally {

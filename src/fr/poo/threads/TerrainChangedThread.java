@@ -2,7 +2,7 @@ package fr.poo.threads;
 
 import fr.poo.graphics.components.TerrainComponent;
 
-public class TerrainChangedThread implements Runnable {
+public class TerrainChangedThread extends Thread {
     private TerrainComponent component;
     private int currentSize;
     private boolean running;

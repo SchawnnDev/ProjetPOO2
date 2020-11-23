@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
         contentPane.add(toolBoxComponent, BorderLayout.WEST);
 
         this.terrainChangedThread = new TerrainChangedThread(terrainComponent);
-        ThreadManager.getService().submit(this.terrainChangedThread);
+        this.terrainChangedThread.start();
 
         this.pack();
         this.setLocationRelativeTo(null);
